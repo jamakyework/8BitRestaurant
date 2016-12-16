@@ -1,3 +1,19 @@
+$(document).ready(function(){
+console.log('sourced');
+init();
+
+
+
+
+
+
+
+}); //end document ready
+
+function init(){
+
+}
+
 // arrays
 var tables=[];
 var employees=[];
@@ -16,7 +32,7 @@ var createEmployee = function(){
   employees.push( newEmployee );
   // update display
   listEmployees();
-} // end createEmployee
+}; // end createEmployee
 
 var createTable = function(){
   console.log( 'in createTable' );
@@ -29,13 +45,13 @@ var createTable = function(){
     'capacity': tableCapacity,
     'server': -1,
     'status': 'empty'
-  }
+  };
   // push new obejct into tables array
   tables.push( newTable );
   console.log( 'added table: ' + newTable.name );
   // update output
   listTables();
-} // end createTable
+}; // end createTable
 
 var cycleStatus = function( index ){
   console.log( 'in cycleStatus: ' + index );
@@ -56,7 +72,7 @@ var cycleStatus = function( index ){
   }
   // show tables on DOM
   listTables();
-} // end cycleStatus
+}; // end cycleStatus
 
 var listEmployees = function(){
   console.log( 'in listEmployees', employees );
@@ -70,7 +86,7 @@ var listEmployees = function(){
   document.getElementById('employeesOutput').innerHTML += '</ul>';
   // update tables display
   listTables();
-} // end listEmployees
+}; // end listEmployees
 
 var listTables = function(){
   console.log( "in listTables" );
@@ -91,4 +107,4 @@ var listTables = function(){
     // add line to output div
     document.getElementById('tablesOutput').innerHTML += '<p>' + line + '</p>';
   }
-} // end listTables
+}; // end listTables
