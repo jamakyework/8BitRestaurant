@@ -6,6 +6,7 @@ init();
 function init(){
 $('#addEmp').on('click', createEmployee);
 $('#addDable').on('click', createTable);
+listEmployees();
 }
 
 // arrays
@@ -32,10 +33,12 @@ var createEmployee = function(){
     data: newEmployee,
     success: function(response){
       console.log("Recieved: ", response);
+      listEmployees();
+
     }//end success
   });// end ajax
   // update display
-  listEmployees();
+
 }; // end createEmployee
 
 var listEmployees = function(){
@@ -53,6 +56,7 @@ var listEmployees = function(){
         document.getElementById('employeesOutput').innerHTML += '<li>' + line + '</li>';
       }
       document.getElementById('employeesOutput').innerHTML += '</ul>';
+      listTables();
     }
   });//end GET ajax
 }; // end listEmployees
@@ -106,17 +110,6 @@ var cycleStatus = function( index ){
   listTables();
 }; // end cycleStatus
 
-// function getTables (){
-//   $.ajax({
-//     type: 'GET',
-//     url: '/allTable',
-//     success: function(response){
-//       console.log('Get All DTables', response);
-//       // show tables on DOM
-//       listTables();
-//     }
-//   });//end GET ajax
-// }//end getTables
 
 
 var listTables = function(){
@@ -124,14 +117,29 @@ var listTables = function(){
   $.ajax({
     type: 'GET',
     url: '/allTable',
-    success: function(response){
-      console.log('Get All DTables', response);
+    success: function(Tresponse){
+      console.log('Get All DTables', Tresponse);
       // show tables on DOM
       $.ajax({
         type: 'GET',
         url: '/allEmp',
-        success: function(jam ){
-          console.log('Alex! This is neat. Checkout my jam: ', jam);
+        success: function(Eresponse ){
+          console.log('Alex! This is neat. Checkout my jam: ', Eresponse);
+          document.getElementById('tablesOutput').innerHTML = '';
+          // loop through the tables array and display each table
+          // select to assign a server to this table
+          var selectText = '<select>';
+          for (var i = 0; i < Eresponse.length; i++) {
+            selectText+= '<option value=' + i + '>'+ Eresponse[i].first_name + ' ' + Eresponse[i].last_name + '</option>';
+          }
+          selectText += '</select>';
+          // display employees
+           for( i=0; i< Tresponse.length; i++ ){
+            // status is a button that, when clicked runs cycleStatus for this table
+            var line = Tresponse[i].name + " - capacity: " + Tresponse[i].capacity + ', server: ' + selectText + ', status: <button onClick="cycleStatus(' + i + ')">' + Tresponse[i].status + "</button>";
+            // add line to output div
+            document.getElementById('tablesOutput').innerHTML += '<p>' + line + '</p>';
+          }
         }
       });
     }
