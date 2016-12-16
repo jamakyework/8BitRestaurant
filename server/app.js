@@ -75,7 +75,7 @@ app.get( '/allEmp', function( req, res ){
       });
       query.on( 'end', function(){
         done();
-        console.log( allEmp );
+        // console.log( allEmp );
 
         res.send( allEmp );
       });
@@ -100,10 +100,51 @@ app.get( '/allTable', function( req, res ){
       });
       query.on( 'end', function(){
         done();
-        console.log( allTables );
+        // console.log( allTables );
 
         res.send( allTables );
       });
     } // end if else
   }); // end connect
 }); // end app.get
+
+// change status
+app.post( '/status', urlencodedParser, function( req, res ){
+  console.log( 'status change route hit' );
+  //cont to DB
+  pg.connect( connectionString, function(err, client, done){
+    if( err ){
+      console.log(err);
+    } else {
+      console.log('connected to DB');
+      // use wildcards to insert record
+      var query = client.query( 'SELECT status FROM dtables WHERE id = ' + req.body.id + ';' );
+      //varriable for currentStatus
+      var currentStatus;
+      query.on('row',  function (row){
+        console.log("this is row.status: ", row.status);
+        currentStatus = row.status;
+      });
+
+      switch( currentStatus ){
+        case  'empty':
+            console.log("it's empty!!");
+            client.query( 'UPDATE dtables SET status = \'seated\' WHERE id = ' + req.body.id + ';' );
+            break;
+        case  'seated':
+            //
+            break;
+        case  'served':
+            //
+            break;
+        case  'dirty':
+            break;
+        default:
+          //
+      }
+
+      done();
+      res.send('meow');
+    } //end if else
+  });// end connect
+});

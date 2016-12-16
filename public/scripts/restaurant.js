@@ -88,24 +88,34 @@ var createTable = function(){
   listTables();
 }; // end createTable
 
-var cycleStatus = function( index ){
-  console.log( 'in cycleStatus: ' + index );
+var cycleStatus = function( tableId ){
+  console.log( 'in cycleStatus: ' + tableId );
+
+  toSend = { id: tableId };
+  $.ajax({
+    type: 'POST',
+    url: '/status',
+    data: toSend,
+    success: function(response){
+      console.log('switch happend', response);
+    }
+  });
   // move table status to next status
-  switch( tables[index].status ){
-    case  'empty':
-        tables[index].status = 'seated';
-        break;
-    case  'seated':
-        tables[index].status = 'served';
-        break;
-    case  'served':
-        tables[index].status = 'dirty';
-        break;
-    case  'dirty':
-        break;
-    default:
-      tables[index].status = 'empty';
-  }
+  // switch( tables[index].status ){
+  //   case  'empty':
+  //       tables[index].status = 'seated';
+  //       break;
+  //   case  'seated':
+  //       tables[index].status = 'served';
+  //       break;
+  //   case  'served':
+  //       tables[index].status = 'dirty';
+  //       break;
+  //   case  'dirty':
+  //       break;
+  //   default:
+  //     tables[index].status = 'empty';
+  // }
   // show tables on DOM
   listTables();
 }; // end cycleStatus
@@ -136,7 +146,7 @@ var listTables = function(){
           // display employees
            for( i=0; i< Tresponse.length; i++ ){
             // status is a button that, when clicked runs cycleStatus for this table
-            var line = Tresponse[i].name + " - capacity: " + Tresponse[i].capacity + ', server: ' + selectText + ', status: <button onClick="cycleStatus(' + i + ')">' + Tresponse[i].status + "</button>";
+            var line = Tresponse[i].name + " - capacity: " + Tresponse[i].capacity + ', server: ' + selectText + ', status: <button onClick="cycleStatus(' + Tresponse[i].id + ')">' + Tresponse[i].status + "</button>";
             // add line to output div
             document.getElementById('tablesOutput').innerHTML += '<p>' + line + '</p>';
           }
