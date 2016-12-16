@@ -21,34 +21,9 @@ app.get( '/', function( req, res ){
   res.sendFile( 'index.html' );
 });
 
-// get koalas
-app.get( '/getKoalas', function( req, res ){
-  console.log( 'getKoalas route hit' );
-  //connect to db
-  pg.connect( connectionString, function( err, client, done){
-    if(err){
-      console.log(err);
-    } else {
-      console.log('connected to DB');
-      var query = client.query( 'SELECT * FROM koalas' );
-      //array for koalas
-      var allKoalas = [];
-      query.on( 'row', function( row ){
-        allKoalas.push (row);
-      });
-      query.on( 'end', function(){
-        done();
-        console.log( allKoalas );
-
-        res.send( allKoalas );
-      });
-    } // end if else
-  }); // end connect
-}); // end app.get
-
-// add koala
-app.post( '/addKoala', urlencodedParser, function( req, res ){
-  console.log( 'addKoala route hit' );
+// add Empolyee
+app.post( '/addEmployee', urlencodedParser, function( req, res ){
+  console.log( 'addEmplyee route hit' );
   //cont to DB
   pg.connect( connectionString, function(err, client, done){
     if( err ){
@@ -56,21 +31,79 @@ app.post( '/addKoala', urlencodedParser, function( req, res ){
     } else {
       console.log('connected to DB');
       // use wildcards to insert record
-      client.query( 'INSERT INTO koalas (name, age, sex, ready_for_transfer, notes) VALUES ($1, $2, $3, $4, $5)',
-                    [req.body.name, req.body.age, req.body.sex, req.body.ready_for_transfer, req.body.notes] );
+      client.query( 'INSERT INTO waitstaff (first_name, last_name, on_duty) VALUES ($1, $2, $3)',
+                    [req.body.firstName, req.body.lastName, req.body.duty] );
       done();
       res.send('meow');
     } //end if else
   });// end connect
 });
 
-// add koala
-app.post( '/editKoala', urlencodedParser, function( req, res ){
-  console.log( 'editKoala route hit' );
-  //assemble object to send
-  var objectToSend={
-    response: 'from editKoala route'
-  }; //end objectToSend
-  //send info back to client
-  res.send( objectToSend );
+// add Dtables
+app.post( '/addDtable', urlencodedParser, function( req, res ){
+  console.log( 'addDtable route hit' );
+  //cont to DB
+  pg.connect( connectionString, function(err, client, done){
+    if( err ){
+      console.log(err);
+    } else {
+      console.log('connected to DB');
+      // use wildcards to insert record
+      client.query( 'INSERT INTO dtables(name, capacity, status) VALUES ($1, $2, $3)',
+                    [req.body.name, req.body.capacity, req.body.status] );
+      done();
+      res.send('meow');
+    } //end if else
+  });// end connect
 });
+
+
+// get employees
+app.get( '/allEmp', function( req, res ){
+  console.log( 'allEmp route hit' );
+  //connect to db
+  pg.connect( connectionString, function( err, client, done){
+    if(err){
+      console.log(err);
+    } else {
+      console.log('connected to DB');
+      var query = client.query( 'SELECT * FROM waitstaff' );
+      //array for employees
+      var allEmp = [];
+      query.on( 'row', function( row ){
+        allEmp.push (row);
+      });
+      query.on( 'end', function(){
+        done();
+        console.log( allEmp );
+
+        res.send( allEmp );
+      });
+    } // end if else
+  }); // end connect
+}); // end app.get
+
+// get dtables
+app.get( '/allTable', function( req, res ){
+  console.log( 'allTable route hit' );
+  //connect to db
+  pg.connect( connectionString, function( err, client, done){
+    if(err){
+      console.log(err);
+    } else {
+      console.log('connected to DB');
+      var query = client.query( 'SELECT * FROM dtables' );
+      //array for dtables
+      var allTables = [];
+      query.on( 'row', function( row ){
+        allTables.push (row);
+      });
+      query.on( 'end', function(){
+        done();
+        console.log( allTables );
+
+        res.send( allTables );
+      });
+    } // end if else
+  }); // end connect
+}); // end app.get

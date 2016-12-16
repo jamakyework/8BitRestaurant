@@ -1,17 +1,11 @@
 $(document).ready(function(){
 console.log('sourced');
 init();
-
-
-
-
-
-
-
 }); //end document ready
 
 function init(){
-
+$('#addEmp').on('click', createEmployee);
+$('#addDable').on('click', createTable);
 }
 
 // arrays
@@ -26,13 +20,43 @@ var createEmployee = function(){
   // create object for employee
   var newEmployee= {
     firstName : employeeFirstName,
-    lastName : employeeLastName
+    lastName : employeeLastName,
+    duty: true
   }; // end object
   // push into employees array
   employees.push( newEmployee );
+
+  $.ajax({
+    type: 'POST',
+    url: 'addEmployee',
+    data: newEmployee,
+    success: function(response){
+      console.log("Recieved: ", response);
+    }//end success
+  });// end ajax
   // update display
   listEmployees();
 }; // end createEmployee
+
+var listEmployees = function(){
+  $.ajax({
+    type: 'GET',
+    url: '/allEmp',
+    success: function(response){
+      console.log('Get All Employees', response);
+    }
+  });//end GET ajax
+  
+  document.getElementById('employeesOutput').innerHTML = '<ul>';
+  // loop through the tables array and display each table
+  for( i=0; i< employees.length; i++ ){
+    var line = employees[i].firstName + " " + employees[i].lastName + ', id: ' + i;
+    // add line to output div
+    document.getElementById('employeesOutput').innerHTML += '<li>' + line + '</li>';
+  }
+  document.getElementById('employeesOutput').innerHTML += '</ul>';
+
+}; // end listEmployees
 
 var createTable = function(){
   console.log( 'in createTable' );
@@ -43,11 +67,19 @@ var createTable = function(){
   var newTable = {
     'name': tableName,
     'capacity': tableCapacity,
-    'server': -1,
     'status': 'empty'
   };
   // push new obejct into tables array
   tables.push( newTable );
+
+  $.ajax({
+    type: 'POST',
+    url: '/addDtable',
+    data: newTable,
+    succes: function(response){
+      console.log('Received: ', response);
+    }// end sucess
+  });// end ajax
   console.log( 'added table: ' + newTable.name );
   // update output
   listTables();
@@ -67,6 +99,7 @@ var cycleStatus = function( index ){
         tables[index].status = 'dirty';
         break;
     case  'dirty':
+        break;
     default:
       tables[index].status = 'empty';
   }
@@ -74,26 +107,24 @@ var cycleStatus = function( index ){
   listTables();
 }; // end cycleStatus
 
-var listEmployees = function(){
-  console.log( 'in listEmployees', employees );
-  document.getElementById('employeesOutput').innerHTML = '<ul>';
-  // loop through the tables array and display each table
-  for( i=0; i< employees.length; i++ ){
-    var line = employees[i].firstName + " " + employees[i].lastName + ', id: ' + i;
-    // add line to output div
-    document.getElementById('employeesOutput').innerHTML += '<li>' + line + '</li>';
-  }
-  document.getElementById('employeesOutput').innerHTML += '</ul>';
-  // update tables display
-  listTables();
-}; // end listEmployees
+function getTables (){
+  $.ajax({
+    type: 'GET',
+    url: '/allTable',
+    success: function(response){
+      console.log('Get All DTables', response);
+      // show tables on DOM
+      listTables();
+    }
+  });//end GET ajax
+}//end getTables
+
 
 var listTables = function(){
   console.log( "in listTables" );
   // target our output div
   document.getElementById('tablesOutput').innerHTML = '';
   // loop through the tables array and display each table
-
   // select to assign a server to this table
   var selectText = '<select>';
   for (var i = 0; i < employees.length; i++) {
@@ -101,7 +132,7 @@ var listTables = function(){
   }
   selectText += '</select>';
   // display employees
-  for( i=0; i< tables.length; i++ ){
+   for( i=0; i< tables.length; i++ ){
     // status is a button that, when clicked runs cycleStatus for this table
     var line = tables[i].name + " - capacity: " + tables[i].capacity + ', server: ' + selectText + ', status: <button onClick="cycleStatus(' + i + ')">' + tables[i].status + "</button>";
     // add line to output div
