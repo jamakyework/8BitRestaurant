@@ -44,18 +44,17 @@ var listEmployees = function(){
     url: '/allEmp',
     success: function(response){
       console.log('Get All Employees', response);
+
+      document.getElementById('employeesOutput').innerHTML = '<ul>';
+      // loop through the tables array and display each table
+      for( i=0; i< response.length; i++ ){
+        var line = response[i].first_name + " " + response[i].last_name + ', id: ' + response[i].id;
+        // add line to output div
+        document.getElementById('employeesOutput').innerHTML += '<li>' + line + '</li>';
+      }
+      document.getElementById('employeesOutput').innerHTML += '</ul>';
     }
   });//end GET ajax
-  
-  document.getElementById('employeesOutput').innerHTML = '<ul>';
-  // loop through the tables array and display each table
-  for( i=0; i< employees.length; i++ ){
-    var line = employees[i].firstName + " " + employees[i].lastName + ', id: ' + i;
-    // add line to output div
-    document.getElementById('employeesOutput').innerHTML += '<li>' + line + '</li>';
-  }
-  document.getElementById('employeesOutput').innerHTML += '</ul>';
-
 }; // end listEmployees
 
 var createTable = function(){
@@ -107,21 +106,36 @@ var cycleStatus = function( index ){
   listTables();
 }; // end cycleStatus
 
-function getTables (){
+// function getTables (){
+//   $.ajax({
+//     type: 'GET',
+//     url: '/allTable',
+//     success: function(response){
+//       console.log('Get All DTables', response);
+//       // show tables on DOM
+//       listTables();
+//     }
+//   });//end GET ajax
+// }//end getTables
+
+
+var listTables = function(){
+  console.log( "in listTables" );
   $.ajax({
     type: 'GET',
     url: '/allTable',
     success: function(response){
       console.log('Get All DTables', response);
       // show tables on DOM
-      listTables();
+      $.ajax({
+        type: 'GET',
+        url: '/allEmp',
+        success: function(jam ){
+          console.log('Alex! This is neat. Checkout my jam: ', jam);
+        }
+      });
     }
   });//end GET ajax
-}//end getTables
-
-
-var listTables = function(){
-  console.log( "in listTables" );
   // target our output div
   document.getElementById('tablesOutput').innerHTML = '';
   // loop through the tables array and display each table
